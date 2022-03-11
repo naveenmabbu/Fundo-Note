@@ -1,0 +1,15 @@
+C:\Users\User\source\repos\FundoNote\BusinessLayer\bin\Debug\netcoreapp3.1\BusinessLayer.deps.json
+C:\Users\User\source\repos\FundoNote\BusinessLayer\bin\Debug\netcoreapp3.1\BusinessLayer.dll
+C:\Users\User\source\repos\FundoNote\BusinessLayer\bin\Debug\netcoreapp3.1\BusinessLayer.pdb
+C:\Users\User\source\repos\FundoNote\BusinessLayer\bin\Debug\netcoreapp3.1\CommonLayer.dll
+C:\Users\User\source\repos\FundoNote\BusinessLayer\bin\Debug\netcoreapp3.1\RepositoryLayer.dll
+C:\Users\User\source\repos\FundoNote\BusinessLayer\bin\Debug\netcoreapp3.1\RepositoryLayer.pdb
+C:\Users\User\source\repos\FundoNote\BusinessLayer\bin\Debug\netcoreapp3.1\CommonLayer.pdb
+C:\Users\User\source\repos\FundoNote\BusinessLayer\obj\Debug\netcoreapp3.1\BusinessLayer.csproj.AssemblyReference.cache
+C:\Users\User\source\repos\FundoNote\BusinessLayer\obj\Debug\netcoreapp3.1\BusinessLayer.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\User\source\repos\FundoNote\BusinessLayer\obj\Debug\netcoreapp3.1\BusinessLayer.AssemblyInfoInputs.cache
+C:\Users\User\source\repos\FundoNote\BusinessLayer\obj\Debug\netcoreapp3.1\BusinessLayer.AssemblyInfo.cs
+C:\Users\User\source\repos\FundoNote\BusinessLayer\obj\Debug\netcoreapp3.1\BusinessLayer.csproj.CoreCompileInputs.cache
+C:\Users\User\source\repos\FundoNote\BusinessLayer\obj\Debug\netcoreapp3.1\BusinessLayer.csproj.CopyComplete
+C:\Users\User\source\repos\FundoNote\BusinessLayer\obj\Debug\netcoreapp3.1\BusinessLayer.dll
+C:\Users\User\source\repos\FundoNote\BusinessLayer\obj\Debug\netcoreapp3.1\BusinessLayer.pdb
