@@ -50,3 +50,13 @@ C:\Users\User\source\repos\FundoNote\FundoNote\bin\Debug\netcoreapp3.1\Microsoft
 C:\Users\User\source\repos\FundoNote\FundoNote\bin\Debug\netcoreapp3.1\Microsoft.IdentityModel.Logging.dll
 C:\Users\User\source\repos\FundoNote\FundoNote\bin\Debug\netcoreapp3.1\Microsoft.IdentityModel.Tokens.dll
 C:\Users\User\source\repos\FundoNote\FundoNote\bin\Debug\netcoreapp3.1\System.IdentityModel.Tokens.Jwt.dll
+C:\Users\User\source\repos\FundoNote\FundoNote\bin\Debug\netcoreapp3.1\Microsoft.OpenApi.dll
+C:\Users\User\source\repos\FundoNote\FundoNote\bin\Debug\netcoreapp3.1\Swashbuckle.AspNetCore.Swagger.dll
+C:\Users\User\source\repos\FundoNote\FundoNote\bin\Debug\netcoreapp3.1\Swashbuckle.AspNetCore.SwaggerGen.dll
+C:\Users\User\source\repos\FundoNote\FundoNote\bin\Debug\netcoreapp3.1\Swashbuckle.AspNetCore.SwaggerUI.dll
+C:\Users\User\source\repos\FundoNote\FundoNote\obj\Debug\netcoreapp3.1\FundoNote.MvcApplicationPartsAssemblyInfo.cs
+C:\Users\User\source\repos\FundoNote\FundoNote\bin\Debug\netcoreapp3.1\Microsoft.AspNetCore.Authentication.JwtBearer.dll
+C:\Users\User\source\repos\FundoNote\FundoNote\bin\Debug\netcoreapp3.1\Microsoft.IdentityModel.Protocols.dll
+C:\Users\User\source\repos\FundoNote\FundoNote\bin\Debug\netcoreapp3.1\Microsoft.IdentityModel.Protocols.OpenIdConnect.dll
+C:\Users\User\source\repos\FundoNote\FundoNote\bin\Debug\netcoreapp3.1\Newtonsoft.Json.dll
+C:\Users\User\source\repos\FundoNote\FundoNote\bin\Debug\netcoreapp3.1\Experimental.System.Messaging.dll

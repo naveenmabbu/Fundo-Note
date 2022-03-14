@@ -75,5 +75,52 @@ namespace RepositoryLayer.Service
             return new JwtSecurityTokenHandler().WriteToken(token);
 
         }
+        public string ForgetPassword(string email)
+        {
+            try
+            {
+                var user = fundoContext.User.Where(x => x.Email == email).FirstOrDefault();
+                if(user!=null)
+                {
+                    var token = GenerateSecurityToken(user.Email, user.Id);
+                    new Msmq().sender(token);
+                    return token;
+                }
+                else
+                {
+                    return null;
+                }
+
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+        public bool ResetPassword(string email, string password, string conformPassword)
+        {
+            try
+            {
+                if(password.Equals(conformPassword))
+                {
+                    var user = fundoContext.User.Where(x => x.Email == email).FirstOrDefault();
+                    user.Password = conformPassword;
+                    fundoContext.SaveChanges();
+                    return true;
+
+                }
+                else
+                {
+                    return false;
+                }
+
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
     }
 }

@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace FundoNote.Controllers
@@ -56,7 +57,44 @@ namespace FundoNote.Controllers
             }
         }
 
+        [HttpPost("ForgetPassword")]
+        public IActionResult ForgetPassword(string email)
+        {
+            try
+            {
+                var result = userBL.ForgetPassword( email);
+                if (result != null)
+                    return this.Ok(new { success = true, message = "mail sent succesful", data = result });
+                else
+                    return this.BadRequest(new { success = false, message = "enter a valid email" });
 
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        [HttpPut("ResetPassword")]
+        public IActionResult ResetPassword(string password,string confirmpassword)
+        {
+            try
+            {
+                var email = User.FindFirst(ClaimTypes.Email).Value.ToString();
+                var user = userBL.ResetPassword(email,password, confirmpassword);
+                if (!user)
+                    return this.BadRequest(new { success = false, message = "enter a valid email" });
+                else
+                    
+                return this.Ok(new { success = true, message = "rest password succesful" });
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
 
 
     }
