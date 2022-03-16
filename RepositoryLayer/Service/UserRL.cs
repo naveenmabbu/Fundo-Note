@@ -10,6 +10,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
 using System.Text;
+using Xamarin.Essentials;
 
 namespace RepositoryLayer.Service
 {
@@ -21,6 +22,22 @@ namespace RepositoryLayer.Service
         {
             this.fundoContext = fundoContext;
             this._Toolsettings = _Toolsettings;
+        }
+
+        public UserEntity GetEmail(string collabEmail)
+        {
+            try
+            {
+                var result = fundoContext.User.FirstOrDefault(e => e.Email == collabEmail);
+
+                return result;
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+
         }
 
         public UserEntity Registration(UserRegistration User)

@@ -38,7 +38,8 @@ namespace FundoNote
             services.AddDbContext<FundoContext>(opts => opts.UseSqlServer(Configuration["ConnectionString:FundoDB"]));
             services.AddControllers();
             services.AddSwaggerGen();
-              services.AddSwaggerGen(c =>
+            
+            services.AddSwaggerGen(c =>
               {
                   c.SwaggerDoc("v1", new OpenApiInfo { Title = "Fundoo-Notes", Version = "v1" });
                   var securitySchema = new OpenApiSecurityScheme
@@ -84,6 +85,8 @@ namespace FundoNote
             services.AddTransient<IUserRL, UserRL>();
             services.AddTransient<INoteBL, NoteBL>();
             services.AddTransient<INoteRL, NoteRL>();
+            services.AddTransient<ICollabBL, CollabBL>();
+            services.AddTransient<ICollabRL, CollabRL>();
 
         }
 
@@ -111,6 +114,7 @@ namespace FundoNote
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "My Test1 Api v1");
             });
+            
         }
     }
 }

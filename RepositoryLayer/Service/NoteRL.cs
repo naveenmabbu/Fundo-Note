@@ -1,4 +1,7 @@
-﻿using CommonLayer.Model;
+﻿using CloudinaryDotNet;
+using CloudinaryDotNet.Actions;
+using CommonLayer.Model;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using RepositoryLayer.Context;
 using RepositoryLayer.Entity;
@@ -11,17 +14,19 @@ using System.Text;
 
 namespace RepositoryLayer.Service
 {
-    public class NoteRL: INoteRL
+    public class NoteRL : INoteRL
     {
         //instance of  FundooContext Class
         private readonly FundoContext fundoContext;
-        private IConfiguration _config;
 
+        private readonly IConfiguration _config;
+
+        
         //Constructor
-        public NoteRL(FundoContext fundooContext, IConfiguration configuration)
+        public NoteRL(FundoContext fundooContext, IConfiguration _config)
         {
             this.fundoContext = fundooContext;
-            this._config = configuration;
+            this._config = _config;
 
         }
         //Method to Notes Details.
@@ -62,7 +67,6 @@ namespace RepositoryLayer.Service
                 {
                     note.Title = updateNote.Title;
                     note.Description = updateNote.Description;
-                    note.Colour = updateNote.Colour;
                     note.Image = updateNote.Image;
                     note.ModifiedAt = updateNote.ModifiedAt;
                     note.Id = noteId;
@@ -79,12 +83,12 @@ namespace RepositoryLayer.Service
                 throw;
             }
         }
-        public bool DeleteNote(long noteId)
+        public bool DeleteNote(long noteId, long userId)
         {
             try
             {
                 // Fetch details with the given noteId.
-                var note = this.fundoContext.Notes.Where(n => n.NotesId == noteId).FirstOrDefault();
+                var note = this.fundoContext.Notes.Where(n => n.NotesId == noteId && n.Id == userId).FirstOrDefault();
                 if (note != null)
                 {
                     // Remove Note details from database
@@ -105,12 +109,12 @@ namespace RepositoryLayer.Service
             }
         }
 
-        public NotesEntity getNote(long noteId)
+        public NotesEntity GetNoteId(long noteId, long userId)
         {
             try
             {
                 // Fetch details with the given noteId.
-                var note = this.fundoContext.Notes.Where(n => n.NotesId == noteId).FirstOrDefault();
+                var note = this.fundoContext.Notes.Where(n => n.NotesId == noteId && n.Id == userId).FirstOrDefault();
                 if (note != null)
                 {
 
@@ -168,6 +172,165 @@ namespace RepositoryLayer.Service
                 throw;
             }
         }
+        //Method to IsPinned Details.
+        public bool IsPinned(long noteId)
+        {
+            try
+            {
+                var notes = fundoContext.Notes.FirstOrDefault(e => e.NotesId == noteId);
 
+                if (notes != null)
+                {
+                    if (notes.Ispinned == true)
+                    {
+                        notes.Ispinned = false;
+                    }
+                    else if (notes.Ispinned == false)
+                    {
+                        notes.Ispinned = true;
+                    }
+                    notes.ModifiedAt = DateTime.Now;
+                }
+                int changes = fundoContext.SaveChanges();
+
+                if (changes > 0)
+                {
+                    return true;
+                }
+                else { return false; }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        //Method to IsTrash Details.
+        public bool IsTrash(long noteId)
+        {
+            try
+            {
+                var notes = fundoContext.Notes.FirstOrDefault(e => e.NotesId == noteId);
+
+                if (notes != null)
+                {
+                    if (notes.IsTrash == true)
+                    {
+                        notes.IsTrash = false;
+                    }
+                    else if (notes.IsTrash == false)
+                    {
+                        notes.IsTrash = true;
+                    }
+                    notes.ModifiedAt = DateTime.Now;
+                }
+                int changes = fundoContext.SaveChanges();
+
+                if (changes > 0)
+                {
+                    return true;
+                }
+                else { return false; }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+        //Method to IsArchive Details.
+        public bool IsArchive(long noteId)
+        {
+            try
+            {
+                var notes = fundoContext.Notes.FirstOrDefault(e => e.NotesId == noteId);
+
+                if (notes != null)
+                {
+                    if (notes.IsArchive == true)
+                    {
+                        notes.IsArchive = false;
+                    }
+                    else if (notes.IsArchive == false)
+                    {
+                        notes.IsArchive = true;
+                    }
+                    notes.ModifiedAt = DateTime.Now;
+                }
+                int changes = fundoContext.SaveChanges();
+
+                if (changes > 0)
+                {
+                    return true;
+                }
+                else { return false; }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+        public NotesEntity UploadImage(long noteId, long userId, IFormFile image)
+        {
+            try
+            {
+                // Fetch All the details with the given noteId and userId
+                var note = this.fundoContext.Notes.FirstOrDefault(n => n.NotesId == noteId && n.Id == userId);
+                if (note != null)
+                {
+                    Account acc = new Account(_config["Cloudinary:CloudName"], _config["Cloudinary:ApiKey"], _config["Cloudinary:ApiSecret"]);
+                    Cloudinary cloud = new Cloudinary(acc);
+                    var imagePath = image.OpenReadStream();
+                    var uploadParams = new ImageUploadParams()
+                    {
+                        File = new FileDescription(image.FileName, imagePath),
+                    };
+                    var uploadResult = cloud.Upload(uploadParams);
+                    note.Image = image.FileName;
+                    this.fundoContext.Notes.Update(note);
+                    int upload = this.fundoContext.SaveChanges();
+                    if (upload > 0)
+                    {
+                        return note;
+                    }
+                    else
+                    {
+                        return null;
+                    }
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+        //Method to ChangeColor Details.
+        public bool ChangeColour(long noteId, long userId, ChangeColour notesModel)
+        {
+            try
+            {
+                var result = fundoContext.Notes.FirstOrDefault(e => e.NotesId == noteId && e.Id == userId);
+
+                if (result != null)
+                {
+                    result.Colour = notesModel.Colour;
+                    result.ModifiedAt = DateTime.Now;
+                }
+                int changes = fundoContext.SaveChanges();
+
+                if (changes > 0)
+                {
+                    return true;
+                }
+                else { return false; }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
     }
 }

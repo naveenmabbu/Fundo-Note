@@ -1,5 +1,6 @@
 ﻿using BusinessLayer.Interface;
 using CommonLayer.Model;
+using Microsoft.AspNetCore.Http;
 using RepositoryLayer.Entity;
 using RepositoryLayer.Interface;
 using System;
@@ -16,6 +17,21 @@ namespace BusinessLayer.Service
             this.noteRL = noteRL;
 
         }
+
+        public bool ChangeColour(long noteId, long userId, ChangeColour notesModel)
+        {
+            try
+            {
+                return noteRL.ChangeColour(noteId, userId,notesModel);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+
+        }
+
         public NotesEntity CreateNote(Note note, long userId)
         {
             try
@@ -29,11 +45,13 @@ namespace BusinessLayer.Service
             }
         }
 
-        public bool DeleteNote(long noteId)
+       
+
+        public bool DeleteNote(long noteId,long userId)
         {
             try
             {
-                return noteRL.DeleteNote(noteId);
+                return noteRL.DeleteNote(noteId, userId);
             }
             catch (Exception)
             {
@@ -41,8 +59,6 @@ namespace BusinessLayer.Service
                 throw;
             }
         }
-
-    
 
         public List<NotesEntity> GetAllNotes()
         {
@@ -58,11 +74,11 @@ namespace BusinessLayer.Service
 
         }
 
-        public NotesEntity getNote(long noteId)
+        public NotesEntity GetNoteId(long noteId, long userId)
         {
             try
             {
-                return noteRL.getNote(noteId);
+                return noteRL.GetNoteId(noteId,userId);
             }
             catch (Exception)
             {
@@ -84,6 +100,49 @@ namespace BusinessLayer.Service
             }
         }
 
+        public bool IsArchive(long noteId)
+        {
+            try
+            {
+                return noteRL.IsArchive(noteId);
+
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        public bool IsPinned(long noteId)
+        {
+            try
+            {
+                return noteRL.IsPinned(noteId);
+
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        public bool IsTrash(long noteId)
+        {
+            try
+            {
+                return noteRL.IsTrash(noteId);
+
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+
+        }
+
         public NotesEntity UpdateNote(UpdateNote updateNote, long noteId)
         {
             try
@@ -97,6 +156,18 @@ namespace BusinessLayer.Service
                 throw;
             }
 
+        }
+
+        public NotesEntity UploadImage(long noteId, long userId, IFormFile image)
+        {
+            try
+            {
+                return this.noteRL.UploadImage(noteId, userId, image);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
     }
 }
