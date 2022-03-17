@@ -87,6 +87,9 @@ namespace FundoNote
             services.AddTransient<INoteRL, NoteRL>();
             services.AddTransient<ICollabBL, CollabBL>();
             services.AddTransient<ICollabRL, CollabRL>();
+            services.AddTransient<ILabelBL, LabelBL>();
+            services.AddTransient<ILabelRL, LabelRL>();
+
 
         }
 
