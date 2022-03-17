@@ -67,5 +67,49 @@ namespace RepositoryLayer.Service
                 throw;
             }
         }
+        public bool RemoveLabel(long labelId, long userId)
+        {
+            try
+            {
+                var labelDetails = this.fundoContext.Label.FirstOrDefault(l => l.LabelId == labelId && l.Id == userId);
+                if (labelDetails != null)
+                {
+                    this.fundoContext.Label.Remove(labelDetails);
+
+                    // Save Changes Made in the database
+                    this.fundoContext.SaveChanges();
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
+        public List<LabelEntity> GetByLabeId(long noteId)
+        {
+            try
+            {
+                // Fetch All the details with the given noteid.
+                var data = this.fundoContext.Label.Where(d => d.NotesId == noteId).ToList();
+                if (data != null)
+                {
+                    return data;
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
     }
 }

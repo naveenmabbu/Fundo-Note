@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using RepositoryLayer.Entity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -58,6 +59,49 @@ namespace FundoNote.Controllers
                 else
                 {
                     return this.BadRequest(new { Success = false, message = "Failed to update" });
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+        [Authorize]
+        [HttpDelete("Remove")]
+        public IActionResult RemoveLabel(long labelId)
+        {
+            try
+            {
+                // Take id of  Logged In User
+                long userId = Convert.ToInt32(User.Claims.FirstOrDefault(e => e.Type == "Id").Value);
+                if (this.labelBL.RemoveLabel(labelId, userId))
+                {
+                    return this.Ok(new { Success = true, message = " Label Removed  successfully " });
+                }
+                else
+                {
+                    return this.BadRequest(new { Success = false, message = "Label Remove Failed " });
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+        [Authorize]
+        [HttpGet("{noteId}/Get")]
+        public List<LabelEntity> GetByLabelId(long noteId)
+        {
+            try
+            {
+                var result = this.labelBL.GetByLabeId(noteId);
+                if (result != null)
+                {
+                    return result;
+                }
+                else
+                {
+                    return null;
                 }
             }
             catch (Exception)

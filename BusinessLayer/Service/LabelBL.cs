@@ -38,5 +38,30 @@ namespace BusinessLayer.Service
                 throw;
             }
         }
+        public List<LabelEntity> GetByLabeId(long noteId)
+        {
+            try
+            {
+                return this.labelRL.GetByLabeId(noteId);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+
+        public bool RemoveLabel(long labelId, long userId)
+        {
+            try
+            {
+                return this.labelRL.RemoveLabel(labelId, userId);
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
     }
 }
