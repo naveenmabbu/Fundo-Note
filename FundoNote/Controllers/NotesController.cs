@@ -4,10 +4,14 @@ using CommonLayer.Model;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Distributed;
+using Microsoft.Extensions.Caching.Memory;
+using Newtonsoft.Json;
 using RepositoryLayer.Entity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace FundoNote.Controllers
@@ -18,9 +22,13 @@ namespace FundoNote.Controllers
     public class NotesController : ControllerBase
     {
         private readonly INoteBL noteBL;
-        public NotesController(INoteBL noteBL)
+        private readonly IMemoryCache memoryCache;
+        private readonly IDistributedCache distributedCache;
+        public NotesController(INoteBL noteBL, IMemoryCache memoryCache, IDistributedCache distributedCache)
         {
             this.noteBL = noteBL;
+            this.memoryCache = memoryCache;
+            this.distributedCache = distributedCache;
         }
         [HttpPost("Create")]
         public IActionResult CreateNote(Note note)
@@ -77,39 +85,21 @@ namespace FundoNote.Controllers
                 throw;
             }
         }
-        [HttpGet("{userid}/Get")]
-        public IActionResult GetNotesByUserId(long userId)
+       
+        [HttpGet("{notesId}/Get")]
+        public IActionResult GetNoteId(long notesId)
         {
             try
             {
-                var notes = this.noteBL.GetNotesByUserId(userId);
+                long userId = Convert.ToInt32(User.Claims.FirstOrDefault(e => e.Type == "Id").Value);
+                var notes = this.noteBL.GetNoteId(notesId,userId);
                 if (notes != null)
                 {
-                    return this.Ok(new { Success = true, message = "notes displayed", data = notes });
+                    return this.Ok(new { Success = true, message = "notes displayed"});
                 }
                 else
                 {
                     return this.BadRequest(new { Success = false, message = "unable to Display the notes" });
-                }
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-        }
-        [HttpGet("{id}/Get")]
-        public NotesEntity GetNoteId(long noteId, long userId)
-        {
-            try
-            {
-                var result = this.noteBL.GetNoteId(noteId, userId);
-                if (result != null)
-                {
-                    return result;
-                }
-                else
-                {
-                    return null;
                 }
             }
             catch (Exception)
@@ -136,6 +126,31 @@ namespace FundoNote.Controllers
             {
                 throw;
             }
+        }
+        [Authorize]
+        [HttpGet("redis")]
+        public async Task<IActionResult> GetAllNotesUsingRedisCache()
+        {
+            var cacheKey = "GetAllNotes";
+            string serializedNotesList;
+            var NotesList = new List<NotesEntity>();
+            var redisNotesList = await distributedCache.GetAsync(cacheKey);
+            if (redisNotesList != null)
+            {
+                serializedNotesList = Encoding.UTF8.GetString(redisNotesList);
+                NotesList = JsonConvert.DeserializeObject<List<NotesEntity>>(serializedNotesList);
+            }
+            else
+            {
+                NotesList = (List <NotesEntity>) this.noteBL.GetAllNotes();
+                serializedNotesList = JsonConvert.SerializeObject(NotesList);
+                redisNotesList = Encoding.UTF8.GetBytes(serializedNotesList);
+                var options = new DistributedCacheEntryOptions()
+                    .SetAbsoluteExpiration(DateTime.Now.AddMinutes(10))
+                    .SetSlidingExpiration(TimeSpan.FromMinutes(2));
+                await distributedCache.SetAsync(cacheKey, redisNotesList, options);
+            }
+            return Ok(NotesList);
         }
         [HttpPut("Pinned")]
         public IActionResult IsPinned(long noteId)

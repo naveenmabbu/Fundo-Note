@@ -111,5 +111,25 @@ namespace RepositoryLayer.Service
                 throw;
             }
         }
+        public List<LabelEntity> GetAllLabels()
+        {
+            try
+            {
+                // Fetch All the details from Labels Table
+                var labels = this.fundoContext.Label.ToList();
+                if (labels != null)
+                {
+                    return labels;
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
     }
 }

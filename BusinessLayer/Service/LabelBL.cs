@@ -63,5 +63,18 @@ namespace BusinessLayer.Service
                 throw;
             }
         }
+
+        public List<LabelEntity> GetAllLabels()
+        {
+            try
+            {
+                return labelRL.GetAllLabels();
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
     }
 }

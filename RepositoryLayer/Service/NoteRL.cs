@@ -109,12 +109,12 @@ namespace RepositoryLayer.Service
             }
         }
 
-        public NotesEntity GetNoteId(long noteId, long userId)
+        public NotesEntity GetNoteId(long notesId, long userId)
         {
             try
             {
                 // Fetch details with the given noteId.
-                var note = this.fundoContext.Notes.Where(n => n.NotesId == noteId && n.Id == userId).FirstOrDefault();
+                var note = this.fundoContext.Notes.Where(n => n.NotesId == notesId && n.Id == userId).FirstOrDefault();
                 if (note != null)
                 {
 
@@ -131,27 +131,7 @@ namespace RepositoryLayer.Service
             }
         }
 
-        public List<NotesEntity> GetNotesByUserId(long userId)
-        {
-            try
-            {
-                //fetch all the notes with user id
-                var notes = this.fundoContext.Notes.Where(n => n.Id == userId).ToList();
-                if (notes != null)
-                {
-                    return notes;
-                }
-                else
-                {
-                    return null;
-                }
-            }
-            catch (Exception)
-            {
-
-                throw;
-            }
-        }
+        
         public List<NotesEntity> GetAllNotes()
         {
             try
