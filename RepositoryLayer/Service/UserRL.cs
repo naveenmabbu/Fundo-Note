@@ -48,7 +48,7 @@ namespace RepositoryLayer.Service
                 userEntity.FirstName = User.FirstName;
                 userEntity.LastName = User.LastName;
                 userEntity.Email = User.Email;
-                userEntity.Password = User.Password;
+                userEntity.Password = this.EncryptPassword(User.Password);
                 fundoContext.Add(userEntity);
                 int result = fundoContext.SaveChanges();
                 if (result > 0)
@@ -62,17 +62,43 @@ namespace RepositoryLayer.Service
                 throw;
             }
         }
+        private string EncryptPassword(string password)
+        {
+            try
+            {
+                byte[] encode = new byte[password.Length];
+                encode = Encoding.UTF8.GetBytes(password);
+                string encryptPass = Convert.ToBase64String(encode);
+                return encryptPass;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+       
+
         public string login(UserLogin userLogin)
         {
             try
             {
-                var user = fundoContext.User.Where(x => x.Email == userLogin.Email && x.Password == userLogin.Password).FirstOrDefault();
-                string token = GenerateSecurityToken(user.Email, user.Id);
-                return token;
+                // if Email and password is empty return null. 
+                if (string.IsNullOrEmpty(userLogin.Email) || string.IsNullOrEmpty(userLogin.Password))
+                {
+                    return null;
+                }
+                var result = fundoContext.User.Where(x => x.Email == userLogin.Email).FirstOrDefault();
+                string dcryptPass = this.DecryptPassword(result.Password);
+                if (result != null && dcryptPass == userLogin.Password)
+                {
+                    string token = GenerateSecurityToken(result.Email, result.Id);
+                    return token;
+                }
+                else
+                    return null;
             }
             catch (Exception)
             {
-
                 throw;
             }
         }

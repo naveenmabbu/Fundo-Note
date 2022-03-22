@@ -74,11 +74,11 @@ namespace BusinessLayer.Service
 
         }
 
-        public NotesEntity GetNoteId(long notesId, long userId)
+        public List<NotesEntity> GetNotesByNotesId(long noteId, long userId)
         {
             try
             {
-                return noteRL.GetNoteId(notesId,userId);
+                return noteRL.GetNotesByNotesId(noteId, userId);
             }
             catch (Exception)
             {
@@ -86,8 +86,6 @@ namespace BusinessLayer.Service
                 throw;
             }
         }
-
-       
 
         public bool IsArchive(long noteId)
         {
@@ -132,11 +130,11 @@ namespace BusinessLayer.Service
 
         }
 
-        public NotesEntity UpdateNote(UpdateNote updateNote, long noteId)
+        public NotesEntity UpdateNote(UpdateNote updateNote, long noteId, long userId)
         {
             try
             {
-                return noteRL.UpdateNote(updateNote, noteId);
+                return noteRL.UpdateNote(updateNote, noteId,userId);
 
             }
             catch (Exception)

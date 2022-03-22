@@ -58,21 +58,20 @@ namespace RepositoryLayer.Service
             }
         }
         //Method to UpdateNote Details.
-        public NotesEntity UpdateNote(UpdateNote updateNote, long noteId)
+        public NotesEntity UpdateNote(UpdateNote updateNote, long noteId,long userId)
         {
             try
             {
-                var note = fundoContext.Notes.Where(update => update.NotesId == noteId).FirstOrDefault();
-                if (note != null)
+                var notes = this.fundoContext.Notes.Where(update => update.NotesId == noteId&&update.Id==userId).FirstOrDefault();
+                if (notes != null)
                 {
-                    note.Title = updateNote.Title;
-                    note.Description = updateNote.Description;
-                    note.Image = updateNote.Image;
-                    note.ModifiedAt = updateNote.ModifiedAt;
-                    note.Id = noteId;
-                    fundoContext.Notes.Update(note);
-                    int result = fundoContext.SaveChanges();
-                    return note;
+                    notes.Title = updateNote.Title;
+                    notes.Description = updateNote.Description;
+                    notes.Image = updateNote.Image;
+                    notes.ModifiedAt = updateNote.ModifiedAt;
+                    this.fundoContext.Notes.Update(notes);
+                    this.fundoContext.SaveChanges();
+                    return notes;
                 }
 
                 else
@@ -109,16 +108,14 @@ namespace RepositoryLayer.Service
             }
         }
 
-        public NotesEntity GetNoteId(long notesId, long userId)
+        public List<NotesEntity> GetNotesByNotesId(long noteId, long userId)
         {
             try
             {
-                // Fetch details with the given noteId.
-                var note = this.fundoContext.Notes.Where(n => n.NotesId == notesId && n.Id == userId).FirstOrDefault();
-                if (note != null)
+                var notesResult = this.fundoContext.Notes.Where(n => n.NotesId == noteId && n.Id == userId).ToList();
+                if (notesResult != null)
                 {
-
-                    return note;
+                    return notesResult;
                 }
                 else
                 {
@@ -127,11 +124,11 @@ namespace RepositoryLayer.Service
             }
             catch (Exception)
             {
+
                 throw;
             }
         }
 
-        
         public List<NotesEntity> GetAllNotes()
         {
             try

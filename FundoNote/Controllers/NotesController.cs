@@ -54,7 +54,8 @@ namespace FundoNote.Controllers
         {
             try
             {
-                var result = noteBL.UpdateNote(note, noteId);
+                long userId = Convert.ToInt32(User.Claims.FirstOrDefault(e => e.Type == "Id").Value);
+                var result = noteBL.UpdateNote(note, noteId,userId);
                 if (result != null)
                     return this.Ok(new { Success = true, message = "Notes updated successful", data = result });
                 else
@@ -85,17 +86,17 @@ namespace FundoNote.Controllers
                 throw;
             }
         }
-       
-        [HttpGet("{notesId}/Get")]
-        public IActionResult GetNoteId(long notesId)
+
+        [HttpGet("{noteId}/GetNote")]
+        public IActionResult GetNotesByNotesId(long noteId)
         {
             try
             {
                 long userId = Convert.ToInt32(User.Claims.FirstOrDefault(e => e.Type == "Id").Value);
-                var notes = this.noteBL.GetNoteId(notesId,userId);
-                if (notes != null)
+                var result = this.noteBL.GetNotesByNotesId(noteId, userId);
+                if (result != null)
                 {
-                    return this.Ok(new { Success = true, message = "notes displayed"});
+                    return this.Ok(new { Success = true, message = "Notes are displayed", data = result });
                 }
                 else
                 {
