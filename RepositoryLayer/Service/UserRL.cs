@@ -76,7 +76,25 @@ namespace RepositoryLayer.Service
                 throw;
             }
         }
-       
+        private string DecryptPassword(string encryptpwd)
+        {
+
+            try
+            {
+                UTF8Encoding encoder = new UTF8Encoding();
+                Decoder utf8Decode = encoder.GetDecoder();
+                byte[] toDecodeByte = Convert.FromBase64String(encryptpwd);
+                int charCount = utf8Decode.GetCharCount(toDecodeByte, 0, toDecodeByte.Length);
+                char[] decodedChar = new char[charCount];
+                utf8Decode.GetChars(toDecodeByte, 0, toDecodeByte.Length, decodedChar, 0);
+                string PassDecrypt = new string(decodedChar);
+                return PassDecrypt;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
 
         public string login(UserLogin userLogin)
         {
