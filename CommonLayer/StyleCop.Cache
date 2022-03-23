@@ -1,9 +1,5 @@
 <stylecopresultscache>
   <version>12</version>
-  <project key="214938399">
-    <configuration>
-    </configuration>
-  </project>
   <sourcecode name="ChangeColour.cs" parser="StyleCop.CSharp.CsParser">
     <timestamps>
       <styleCop>2022-03-23 09:10:00.660</styleCop>
@@ -654,4 +650,8 @@
       </violation>
     </violations>
   </sourcecode>
+  <project key="214938399">
+    <configuration>
+    </configuration>
+  </project>
 </stylecopresultscache>
