@@ -1,71 +1,118 @@
-﻿using BusinessLayer.Interface;
-using BusinessLayer.Service;
-using CommonLayer.Model;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Caching.Distributed;
-using Microsoft.Extensions.Caching.Memory;
-using Newtonsoft.Json;
-using RepositoryLayer.Entity;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace FundoNote.Controllers
+﻿namespace FundoNote.Controllers
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Text;
+    using System.Threading.Tasks;
+    using BusinessLayer.Interface;
+    using CommonLayer.Model;
+    using Microsoft.AspNetCore.Authorization;
+    using Microsoft.AspNetCore.Http;
+    using Microsoft.AspNetCore.Mvc;
+    using Microsoft.Extensions.Caching.Distributed;
+    using Microsoft.Extensions.Caching.Memory;
+    using Newtonsoft.Json;
+    using RepositoryLayer.Entity;
+
+    /// <summary>
+    /// ok ok
+    /// </summary>
+    /// <seealso cref="Microsoft.AspNetCore.Mvc.ControllerBase" />
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]
     public class NotesController : ControllerBase
     {
+        /// <summary>
+        /// The noteBL
+        /// </summary>
         private readonly INoteBL noteBL;
+
+        /// <summary>
+        /// The memory cache
+        /// </summary>
         private readonly IMemoryCache memoryCache;
+
+        /// <summary>
+        /// The distributed cache
+        /// </summary>
         private readonly IDistributedCache distributedCache;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="NotesController"/> class.
+        /// </summary>
+        /// <param name="noteBL">The noteBL.</param>
+        /// <param name="memoryCache">The memory cache.</param>
+        /// <param name="distributedCache">The distributed cache.</param>
         public NotesController(INoteBL noteBL, IMemoryCache memoryCache, IDistributedCache distributedCache)
         {
             this.noteBL = noteBL;
             this.memoryCache = memoryCache;
             this.distributedCache = distributedCache;
         }
+
+        /// <summary>
+        /// Creates the note.
+        /// </summary>
+        /// <param name="note">The note.</param>
+        /// <returns>null null.</returns>
         [HttpPost("Create")]
         public IActionResult CreateNote(Note note)
         {
             try
             {
                 long userId = Convert.ToInt32(User.Claims.FirstOrDefault(e => e.Type == "Id").Value);
-                var result = noteBL.CreateNote(note, userId);
+                var result = this.noteBL.CreateNote(note, userId);
                 if (result != null)
+                {
                     return this.Ok(new { success = true, message = " note creating successful", data = result });
+                }
                 else
+                {
                     return this.BadRequest(new { success = false, message = "note not created" });
-
+                }
             }
             catch (Exception)
             {
-
                 throw;
             }
         }
+
+        /// <summary>
+        /// Updates the note.
+        /// </summary>
+        /// <param name="note">The note.</param>
+        /// <param name="noteId">The note identifier.</param>
+        /// <returns>null null.</returns>
         [HttpPut("Update")]
         public IActionResult UpdateNote(UpdateNote note, long noteId)
         {
             try
             {
                 long userId = Convert.ToInt32(User.Claims.FirstOrDefault(e => e.Type == "Id").Value);
-                var result = noteBL.UpdateNote(note, noteId,userId);
+                var result = this.noteBL.UpdateNote(note, noteId, userId);
                 if (result != null)
+                {
                     return this.Ok(new { Success = true, message = "Notes updated successful", data = result });
+                }
                 else
+                {
                     return this.BadRequest(new { Success = false, message = "failed to update" });
+                }
             }
             catch (Exception e)
             {
                 return this.BadRequest(new { success = false, Message = e.Message });
             }
         }
+
+        /// <summary>
+        /// Deletes the note.
+        /// </summary>
+        /// <param name="noteId">The note identifier.</param>
+        /// <param name="userId">The user identifier.</param>
+        /// <returns>null null.</returns>
         [HttpDelete("Delete")]
         public IActionResult DeleteNote(long noteId, long userId)
         {
@@ -87,6 +134,11 @@ namespace FundoNote.Controllers
             }
         }
 
+        /// <summary>
+        /// Gets the notes by notes identifier.
+        /// </summary>
+        /// <param name="noteId">The note identifier.</param>
+        /// <returns>null null.</returns>
         [HttpGet("{noteId}/GetNote")]
         public IActionResult GetNotesByNotesId(long noteId)
         {
@@ -108,6 +160,11 @@ namespace FundoNote.Controllers
                 throw;
             }
         }
+
+        /// <summary>
+        /// Gets all notes.
+        /// </summary>
+        /// <returns>null null.</returns>
         [HttpGet("GetAllNotes")]
         public List<NotesEntity> GetAllNotes()
         {
@@ -128,6 +185,11 @@ namespace FundoNote.Controllers
                 throw;
             }
         }
+
+        /// <summary>
+        /// Gets all notes using redis cache.
+        /// </summary>
+        /// <returns>null null.</returns>
         [Authorize]
         [HttpGet("redis")]
         public async Task<IActionResult> GetAllNotesUsingRedisCache()
@@ -135,7 +197,7 @@ namespace FundoNote.Controllers
             var cacheKey = "GetAllNotes";
             string serializedNotesList;
             var NotesList = new List<NotesEntity>();
-            var redisNotesList = await distributedCache.GetAsync(cacheKey);
+            var redisNotesList = await this.distributedCache.GetAsync(cacheKey);
             if (redisNotesList != null)
             {
                 serializedNotesList = Encoding.UTF8.GetString(redisNotesList);
@@ -143,30 +205,37 @@ namespace FundoNote.Controllers
             }
             else
             {
-                NotesList = (List <NotesEntity>) this.noteBL.GetAllNotes();
+                NotesList = (List<NotesEntity>) this.noteBL.GetAllNotes();
                 serializedNotesList = JsonConvert.SerializeObject(NotesList);
                 redisNotesList = Encoding.UTF8.GetBytes(serializedNotesList);
                 var options = new DistributedCacheEntryOptions()
                     .SetAbsoluteExpiration(DateTime.Now.AddMinutes(10))
                     .SetSlidingExpiration(TimeSpan.FromMinutes(2));
-                await distributedCache.SetAsync(cacheKey, redisNotesList, options);
+                await this.distributedCache.SetAsync(cacheKey, redisNotesList, options);
             }
-            return Ok(NotesList);
+
+            return this.Ok(NotesList);
         }
+
+        /// <summary>
+        /// Determines whether the specified note identifier is pinned.
+        /// </summary>
+        /// <param name="noteId">The note identifier.</param>
+        /// <returns>null null.</returns>
         [HttpPut("Pinned")]
         public IActionResult IsPinned(long noteId)
         {
-            bool result = noteBL.IsPinned(noteId);
+            bool result = this.noteBL.IsPinned(noteId);
 
             try
             {
                 if (result == true)
                 {
-                    return Ok(new { Success = true, message = "Successful" });
+                    return this.Ok(new { Success = true, message = "Successful" });
                 }
                 else
                 {
-                    return BadRequest(new { Success = false, message = "Unsuccessful" });
+                    return this.BadRequest(new { Success = false, message = "Unsuccessful" });
                 }
             }
             catch (Exception)
@@ -174,22 +243,26 @@ namespace FundoNote.Controllers
                 throw;
             }
         }
-        //IsTrashed 
 
+        /// <summary>
+        /// Determines whether the specified note identifier is trash.
+        /// </summary>
+        /// <param name="noteId">The note identifier.</param>
+        /// <returns>null null.</returns>
         [HttpPut("Trashed")]
         public IActionResult IsTrash(long noteId)
         {
-            bool result = noteBL.IsTrash(noteId);
+            bool result = this.noteBL.IsTrash(noteId);
 
             try
             {
                 if (result == true)
                 {
-                    return Ok(new { Success = true, message = "Successful" });
+                    return this.Ok(new { Success = true, message = "Successful" });
                 }
                 else
                 {
-                    return BadRequest(new { Success = false, message = "Unsuccessful" });
+                    return this.BadRequest(new { Success = false, message = "Unsuccessful" });
                 }
             }
             catch (Exception)
@@ -197,21 +270,25 @@ namespace FundoNote.Controllers
                 throw;
             }
         }
+
+        /// <summary>
+        /// Determines whether the specified note identifier is archive.
+        /// </summary>
+        /// <param name="noteId">The note identifier.</param>
+        /// <returns>null null.</returns>
         [HttpPut("Archived")]
         public IActionResult IsArchive(long noteId)
         {
-            bool result = noteBL.IsArchive(noteId);
-
-
+            bool result = this.noteBL.IsArchive(noteId);
             try
             {
                 if (result == true)
                 {
-                    return Ok(new { Success = true, message = "Successful" });
+                    return this.Ok(new { Success = true, message = "Successful" });
                 }
                 else
                 {
-                    return BadRequest(new { Success = false, message = "Unsuccessful" });
+                    return this.BadRequest(new { Success = false, message = "Unsuccessful" });
                 }
             }
             catch (Exception)
@@ -219,6 +296,13 @@ namespace FundoNote.Controllers
                 throw;
             }
         }
+
+        /// <summary>
+        /// Uploads the image.
+        /// </summary>
+        /// <param name="noteId">The note identifier.</param>
+        /// <param name="image">The image.</param>
+        /// <returns>null null.</returns>
         [Authorize]
         [HttpPost("ImageUpload")]
         public IActionResult UploadImage(long noteId, IFormFile image)
@@ -241,30 +325,34 @@ namespace FundoNote.Controllers
             {
                 throw;
             }
-
         }
-        //Change colour
 
+        /// <summary>
+        /// Gets or Sets.
+        /// </summary>
+        /// <param name="noteId">The note identifier.</param>
+        /// <param name="notesModel">The notes model.</param>
+        /// <returns>null null.</returns>
         [HttpPut("Colour")]
         public IActionResult ChangeColour(long noteId, ChangeColour notesModel)
         {
             var userId = Convert.ToInt32(User.Claims.FirstOrDefault(e => e.Type == "Id").Value);
-            bool result = noteBL.ChangeColour(noteId, userId, notesModel);
+            bool result = this.noteBL.ChangeColour(noteId, userId, notesModel);
 
             try
             {
                 if (result == true)
                 {
-                    return Ok(new { Success = true, message = "Color changed Successfully !!" });
+                    return this.Ok(new { Success = true, message = "Color changed Successfully !!" });
                 }
                 else
                 {
-                    return BadRequest(new { Success = false, message = "Color not changed !!" });
+                    return this.BadRequest(new { Success = false, message = "Color not changed !!" });
                 }
             }
             catch (Exception e)
             {
-                return BadRequest(new { Success = false, message = e.Message, stackTrace = e.StackTrace });
+                return this.BadRequest(new { Success = false, message = e.Message, stackTrace = e.StackTrace });
             }
         }
     }

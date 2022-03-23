@@ -1,32 +1,60 @@
-﻿using BusinessLayer.Interface;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Caching.Distributed;
-using Microsoft.Extensions.Caching.Memory;
-using Newtonsoft.Json;
-using RepositoryLayer.Entity;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace FundoNote.Controllers
+﻿namespace FundoNote.Controllers
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Text;
+    using System.Threading.Tasks;
+    using BusinessLayer.Interface;
+    using Microsoft.AspNetCore.Authorization;
+    using Microsoft.AspNetCore.Mvc;
+    using Microsoft.Extensions.Caching.Distributed;
+    using Microsoft.Extensions.Caching.Memory;
+    using Newtonsoft.Json;
+    using RepositoryLayer.Entity;
+
+    /// <summary>
+    /// ok ok
+    /// </summary>
+    /// <seealso cref="Microsoft.AspNetCore.Mvc.ControllerBase" />
     [Route("api/[controller]")]
     [ApiController]
     public class LabelController : ControllerBase
     {
+        /// <summary>
+        /// Gets or Sets
+        /// </summary>
         private readonly ILabelBL labelBL;
+
+        /// <summary>
+        /// The memory cache
+        /// </summary>
         private readonly IMemoryCache memoryCache;
+
+        /// <summary>
+        /// The distributed cache
+        /// </summary>
         private readonly IDistributedCache distributedCache;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="LabelController"/> class.
+        /// </summary>
+        /// <param name="labelBL">The labelBL.</param>
+        /// <param name="memoryCache">The memory cache.</param>
+        /// <param name="distributedCache">The distributed cache.</param>
         public LabelController(ILabelBL labelBL, IMemoryCache memoryCache, IDistributedCache distributedCache)
         {
             this.labelBL = labelBL;
             this.memoryCache = memoryCache;
             this.distributedCache = distributedCache;
         }
+
+        /// <summary>
+        /// Adds the label.
+        /// </summary>
+        /// <param name="labelName">Name of the label.</param>
+        /// <param name="noteId">The note identifier.</param>
+        /// <returns>null null.</returns>
         [Authorize]
         [HttpPost("Add")]
         public IActionResult AddLabel(string labelName, long noteId)
@@ -42,15 +70,20 @@ namespace FundoNote.Controllers
                 else
                 {
                     return this.BadRequest(new { success = true, message = "Label adding UnSuccessfull" });
-
                 }
             }
             catch (Exception)
             {
-
                 throw;
             }
         }
+
+        /// <summary>
+        /// Updates the name of the label.
+        /// </summary>
+        /// <param name="labelName">Name of the label.</param>
+        /// <param name="noteId">The note identifier.</param>
+        /// <returns>null null.</returns>
         [Authorize]
         [HttpPut("Update")]
         public IActionResult UpdateLabelName(string labelName, long noteId)
@@ -74,6 +107,12 @@ namespace FundoNote.Controllers
                 throw;
             }
         }
+
+        /// <summary>
+        /// Removes the label.
+        /// </summary>
+        /// <param name="labelId">The label identifier.</param>
+        /// <returns>null null.</returns>
         [Authorize]
         [HttpDelete("Remove")]
         public IActionResult RemoveLabel(long labelId)
@@ -96,6 +135,12 @@ namespace FundoNote.Controllers
                 throw;
             }
         }
+
+        /// <summary>
+        /// Gets the by label identifier.
+        /// </summary>
+        /// <param name="noteId">The note identifier.</param>
+        /// <returns>null null.</returns>
         [Authorize]
         [HttpGet("{noteId}/Get")]
         public List<LabelEntity> GetByLabelId(long noteId)
@@ -117,6 +162,11 @@ namespace FundoNote.Controllers
                 throw;
             }
         }
+
+        /// <summary>
+        /// Gets all labels.
+        /// </summary>
+        /// <returns>null null.</returns>
         [HttpGet("GetAll")]
         public List<LabelEntity> GetAllLabels()
         {
@@ -137,6 +187,11 @@ namespace FundoNote.Controllers
                 throw;
             }
         }
+
+        /// <summary>
+        /// Gets or Sets.
+        /// </summary>
+        /// <returns>null null.</returns>
         [Authorize]
         [HttpGet("redis")]
         public async Task<IActionResult> GetByLabelsUsingRedisCache()
@@ -144,7 +199,7 @@ namespace FundoNote.Controllers
             var cacheKey = " GetByLabels";
             string serializedLabelsList;
             var LabelsList = new List<LabelEntity>();
-            var redisLabelsList = await distributedCache.GetAsync(cacheKey);
+            var redisLabelsList = await this.distributedCache.GetAsync(cacheKey);
             if (redisLabelsList != null)
             {
                 serializedLabelsList = Encoding.UTF8.GetString(redisLabelsList);
@@ -158,9 +213,10 @@ namespace FundoNote.Controllers
                 var options = new DistributedCacheEntryOptions()
                     .SetAbsoluteExpiration(DateTime.Now.AddMinutes(10))
                     .SetSlidingExpiration(TimeSpan.FromMinutes(2));
-                await distributedCache.SetAsync(cacheKey, redisLabelsList, options);
+                await this.distributedCache.SetAsync(cacheKey, redisLabelsList, options);
             }
-            return Ok(LabelsList);
+
+            return this.Ok(LabelsList);
         }
     }
 }
