@@ -1,45 +1,67 @@
-﻿using CommonLayer.Model;
-using Microsoft.Extensions.Configuration;
-using Microsoft.IdentityModel.Tokens;
-using RepositoryLayer.Context;
-using RepositoryLayer.Entity;
-using RepositoryLayer.Interface;
-using System;
-using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
-using System.Security.Claims;
-using System.Text;
-using Xamarin.Essentials;
-
-namespace RepositoryLayer.Service
+﻿namespace RepositoryLayer.Service
 {
-    public class UserRL:IUserRL
+    using System;
+    using System.IdentityModel.Tokens.Jwt;
+    using System.Linq;
+    using System.Security.Claims;
+    using System.Text;
+    using CommonLayer.Model;
+    using Microsoft.Extensions.Configuration;
+    using Microsoft.IdentityModel.Tokens;
+    using RepositoryLayer.Context;
+    using RepositoryLayer.Entity;
+    using RepositoryLayer.Interface;
+
+    /// <summary>
+    /// ok ok
+    /// </summary>
+    /// <seealso cref="RepositoryLayer.Interface.IUserRL" />
+    public class UserRL : IUserRL
     {
+        /// <summary>
+        /// The fundo context
+        /// </summary>
         private readonly FundoContext fundoContext;
+
+        /// <summary>
+        /// Gets or sets
+        /// </summary>
         private readonly IConfiguration _Toolsettings;
-        public UserRL(FundoContext fundoContext,IConfiguration _Toolsettings)
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="UserRL"/> class.
+        /// </summary>
+        /// <param name="fundoContext">The fundo context.</param>
+        /// <param name="_Toolsettings">The toolsettings.</param>
+        public UserRL(FundoContext fundoContext, IConfiguration _Toolsettings)
         {
             this.fundoContext = fundoContext;
             this._Toolsettings = _Toolsettings;
         }
 
+        /// <summary>
+        /// Gets the email.
+        /// </summary>
+        /// <param name="collabEmail">The collab email.</param>
+        /// <returns>get get</returns>
         public UserEntity GetEmail(string collabEmail)
         {
             try
             {
-                var result = fundoContext.User.FirstOrDefault(e => e.Email == collabEmail);
-
+                var result = this.fundoContext.User.FirstOrDefault(e => e.Email == collabEmail);
                 return result;
             }
             catch (Exception)
             {
-
                 throw;
             }
-
         }
 
+        /// <summary>
+        /// Registrations the specified user.
+        /// </summary>
+        /// <param name="User">The user.</param>
+        /// <returns>regi regi</returns>
         public UserEntity Registration(UserRegistration User)
         {
             try
@@ -49,20 +71,29 @@ namespace RepositoryLayer.Service
                 userEntity.LastName = User.LastName;
                 userEntity.Email = User.Email;
                 userEntity.Password = this.EncryptPassword(User.Password);
-                fundoContext.Add(userEntity);
-                int result = fundoContext.SaveChanges();
+                this.fundoContext.Add(userEntity);
+                int result = this.fundoContext.SaveChanges();
                 if (result > 0)
+                {
                     return userEntity;
-                else 
+                }
+                else
+                {
                     return null;
+                }
             }
             catch (Exception)
             {
-
                 throw;
             }
         }
-        private string EncryptPassword(string password)
+
+        /// <summary>
+        /// Encrypts the password.
+        /// </summary>
+        /// <param name="password">The password.</param>
+        /// <returns>encr encr</returns>
+        public string EncryptPassword(string password)
         {
             try
             {
@@ -76,9 +107,14 @@ namespace RepositoryLayer.Service
                 throw;
             }
         }
-        private string DecryptPassword(string encryptpwd)
-        {
 
+        /// <summary>
+        /// Decrypts the password.
+        /// </summary>
+        /// <param name="encryptpwd">The encryptpwd.</param>
+        /// <returns>decr decr</returns>
+        public string DecryptPassword(string encryptpwd)
+        {
             try
             {
                 UTF8Encoding encoder = new UTF8Encoding();
@@ -96,6 +132,11 @@ namespace RepositoryLayer.Service
             }
         }
 
+        /// <summary>
+        /// Logins the specified user login.
+        /// </summary>
+        /// <param name="userLogin">The user login.</param>
+        /// <returns>login login</returns>
         public string login(UserLogin userLogin)
         {
             try
@@ -105,7 +146,8 @@ namespace RepositoryLayer.Service
                 {
                     return null;
                 }
-                var result = fundoContext.User.Where(x => x.Email == userLogin.Email).FirstOrDefault();
+
+                var result = this.fundoContext.User.Where(x => x.Email == userLogin.Email).FirstOrDefault();
                 string dcryptPass = this.DecryptPassword(result.Password);
                 if (result != null && dcryptPass == userLogin.Password)
                 {
@@ -113,35 +155,46 @@ namespace RepositoryLayer.Service
                     return token;
                 }
                 else
+                {
                     return null;
+                }
             }
             catch (Exception)
             {
                 throw;
             }
         }
-        private string GenerateSecurityToken(string Email, long Id)
+
+        /// <summary>
+        /// Generates the security token.
+        /// </summary>
+        /// <param name="Email">The email.</param>
+        /// <param name="Id">The identifier.</param>
+        /// <returns>token token.</returns>
+        public string GenerateSecurityToken(string Email, long Id)
         {
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_Toolsettings["Jwt:secretKey"]));
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
-            var claims = new[] {
-                new Claim(ClaimTypes.Email,Email),
-                new Claim("Id",Id.ToString())
+            var claims = new[] 
+            {
+                new Claim(ClaimTypes.Email, Email),
+                new Claim("Id", Id.ToString())
             };
-            var token = new JwtSecurityToken(_Toolsettings["Jwt:Issuer"],
-              _Toolsettings["Jwt:Issuer"],
-              claims,
-              expires: DateTime.Now.AddMinutes(60),
-              signingCredentials: credentials);
+            var token = new JwtSecurityToken(_Toolsettings["Jwt:Issuer"], _Toolsettings["Jwt:Issuer"], claims, expires: DateTime.Now.AddMinutes(60), signingCredentials: credentials);
             return new JwtSecurityTokenHandler().WriteToken(token);
-
         }
+
+        /// <summary>
+        /// Forgets the password.
+        /// </summary>
+        /// <param name="email">The email.</param>
+        /// <returns>forget forget</returns>
         public string ForgetPassword(string email)
         {
             try
             {
-                var user = fundoContext.User.Where(x => x.Email == email).FirstOrDefault();
-                if(user!=null)
+                var user = this.fundoContext.User.Where(x => x.Email == email).FirstOrDefault();
+                if (user != null)
                 {
                     var token = GenerateSecurityToken(user.Email, user.Id);
                     new Msmq().sender(token);
@@ -151,35 +204,38 @@ namespace RepositoryLayer.Service
                 {
                     return null;
                 }
-
             }
             catch (Exception)
             {
-
                 throw;
             }
         }
+
+        /// <summary>
+        /// Resets the password.
+        /// </summary>
+        /// <param name="email">The email.</param>
+        /// <param name="password">The password.</param>
+        /// <param name="conformPassword">The conform password.</param>
+        /// <returns>reet reset</returns>
         public bool ResetPassword(string email, string password, string conformPassword)
         {
             try
             {
                 if(password.Equals(conformPassword))
                 {
-                    var user = fundoContext.User.Where(x => x.Email == email).FirstOrDefault();
+                    var user = this.fundoContext.User.Where(x => x.Email == email).FirstOrDefault();
                     user.Password = conformPassword;
-                    fundoContext.SaveChanges();
+                    this.fundoContext.SaveChanges();
                     return true;
-
                 }
                 else
                 {
                     return false;
                 }
-
             }
             catch (Exception)
             {
-
                 throw;
             }
         }

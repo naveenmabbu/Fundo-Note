@@ -1,35 +1,54 @@
-﻿using CloudinaryDotNet;
-using CloudinaryDotNet.Actions;
-using CommonLayer.Model;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Configuration;
-using RepositoryLayer.Context;
-using RepositoryLayer.Entity;
-using RepositoryLayer.Interface;
-using RepositoryLayer.Migrations;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace RepositoryLayer.Service
+﻿namespace RepositoryLayer.Service
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using CloudinaryDotNet;
+    using CloudinaryDotNet.Actions;
+    using CommonLayer.Model;
+    using Microsoft.AspNetCore.Http;
+    using Microsoft.Extensions.Configuration;
+    using RepositoryLayer.Context;
+    using RepositoryLayer.Entity;
+    using RepositoryLayer.Interface;
+
+    /// <summary>
+    /// ok ok
+    /// </summary>
+    /// <seealso cref="RepositoryLayer.Interface.INoteRL" />
     public class NoteRL : INoteRL
     {
-        //instance of  FundooContext Class
+        /// <summary>
+        /// The fundo context
+        /// </summary>
         private readonly FundoContext fundoContext;
 
+        /// <summary>
+        /// The configuration
+        /// </summary>
         private readonly IConfiguration _config;
 
+        ////Constructor
         
-        //Constructor
+        /// <summary>
+        /// Initializes a new instance of the <see cref="NoteRL"/> class.
+        /// </summary>
+        /// <param name="fundooContext">The fundoo context.</param>
+        /// <param name="_config">The configuration.</param>
         public NoteRL(FundoContext fundooContext, IConfiguration _config)
         {
             this.fundoContext = fundooContext;
             this._config = _config;
-
         }
-        //Method to Notes Details.
+
+        ////Method to Notes Details.
+        
+        /// <summary>
+        /// Creates the note.
+        /// </summary>
+        /// <param name="note">The note.</param>
+        /// <param name="userId">The user identifier.</param>
+        /// <returns>create create</returns>
         public NotesEntity CreateNote(Note note, long userId)
         {
             try
@@ -45,24 +64,37 @@ namespace RepositoryLayer.Service
                 newNotes.CreatedAt = note.CreatedAt;
                 newNotes.ModifiedAt = note.ModifiedAt;
                 newNotes.Id = userId;
-                fundoContext.Notes.Add(newNotes);
-                int result = fundoContext.SaveChanges();
+                this.fundoContext.Notes.Add(newNotes);
+                int result = this.fundoContext.SaveChanges();
                 if (result > 0)
+                {
                     return newNotes;
+                }
                 else
+                {
                     return null;
+                }
             }
             catch (Exception)
             {
                 throw;
             }
         }
-        //Method to UpdateNote Details.
-        public NotesEntity UpdateNote(UpdateNote updateNote, long noteId,long userId)
+
+        ////Method to UpdateNote Details.
+        
+        /// <summary>
+        /// Updates the note.
+        /// </summary>
+        /// <param name="updateNote">The update note.</param>
+        /// <param name="noteId">The note identifier.</param>
+        /// <param name="userId">The user identifier.</param>
+        /// <returns>update update</returns>
+        public NotesEntity UpdateNote(UpdateNote updateNote, long noteId, long userId)
         {
             try
             {
-                var notes = this.fundoContext.Notes.Where(update => update.NotesId == noteId&&update.Id==userId).FirstOrDefault();
+                var notes = this.fundoContext.Notes.Where(update => update.NotesId == noteId && update.Id == userId).FirstOrDefault();
                 if (notes != null)
                 {
                     notes.Title = updateNote.Title;
@@ -73,15 +105,23 @@ namespace RepositoryLayer.Service
                     this.fundoContext.SaveChanges();
                     return notes;
                 }
-
                 else
+                {
                     return null;
+                }
             }
             catch (Exception)
             {
                 throw;
             }
         }
+
+        /// <summary>
+        /// Deletes the note.
+        /// </summary>
+        /// <param name="noteId">The note identifier.</param>
+        /// <param name="userId">The user identifier.</param>
+        /// <returns>delete delete</returns>
         public bool DeleteNote(long noteId, long userId)
         {
             try
@@ -108,6 +148,12 @@ namespace RepositoryLayer.Service
             }
         }
 
+        /// <summary>
+        /// Gets the notes by notes identifier.
+        /// </summary>
+        /// <param name="noteId">The note identifier.</param>
+        /// <param name="userId">The user identifier.</param>
+        /// <returns>get get</returns>
         public List<NotesEntity> GetNotesByNotesId(long noteId, long userId)
         {
             try
@@ -124,11 +170,14 @@ namespace RepositoryLayer.Service
             }
             catch (Exception)
             {
-
                 throw;
             }
         }
 
+        /// <summary>
+        /// Gets all notes.
+        /// </summary>
+        /// <returns>GetAllNotes GetAllNotes.</returns>
         public List<NotesEntity> GetAllNotes()
         {
             try
@@ -149,12 +198,21 @@ namespace RepositoryLayer.Service
                 throw;
             }
         }
-        //Method to IsPinned Details.
+
+        ////Method to IsPinned Details.
+        
+        /// <summary>
+        /// Determines whether the specified note identifier is pinned.
+        /// </summary>
+        /// <param name="noteId">The note identifier.</param>
+        /// <returns>
+        ///   <c>true</c> if the specified note identifier is pinned; otherwise, <c>false</c>.
+        /// </returns>
         public bool IsPinned(long noteId)
         {
             try
             {
-                var notes = fundoContext.Notes.FirstOrDefault(e => e.NotesId == noteId);
+                var notes = this.fundoContext.Notes.FirstOrDefault(e => e.NotesId == noteId);
 
                 if (notes != null)
                 {
@@ -166,15 +224,20 @@ namespace RepositoryLayer.Service
                     {
                         notes.Ispinned = true;
                     }
+
                     notes.ModifiedAt = DateTime.Now;
                 }
-                int changes = fundoContext.SaveChanges();
+
+                int changes = this.fundoContext.SaveChanges();
 
                 if (changes > 0)
                 {
                     return true;
                 }
-                else { return false; }
+                else 
+                {
+                    return false; 
+                }
             }
             catch (Exception)
             {
@@ -182,12 +245,20 @@ namespace RepositoryLayer.Service
             }
         }
 
-        //Method to IsTrash Details.
+        ////Method to IsTrash Details. 
+        
+        /// <summary>
+        /// Determines whether the specified note identifier is trash.
+        /// </summary>
+        /// <param name="noteId">The note identifier.</param>
+        /// <returns>
+        ///   <c>true</c> if the specified note identifier is trash; otherwise, <c>false</c>.
+        /// </returns>
         public bool IsTrash(long noteId)
         {
             try
             {
-                var notes = fundoContext.Notes.FirstOrDefault(e => e.NotesId == noteId);
+                var notes = this.fundoContext.Notes.FirstOrDefault(e => e.NotesId == noteId);
 
                 if (notes != null)
                 {
@@ -199,27 +270,41 @@ namespace RepositoryLayer.Service
                     {
                         notes.IsTrash = true;
                     }
+
                     notes.ModifiedAt = DateTime.Now;
                 }
-                int changes = fundoContext.SaveChanges();
+
+                int changes = this.fundoContext.SaveChanges();
 
                 if (changes > 0)
                 {
                     return true;
                 }
-                else { return false; }
+                else 
+                {
+                    return false; 
+                }
             }
             catch (Exception)
             {
                 throw;
             }
         }
-        //Method to IsArchive Details.
+
+        ////Method to IsArchive Details.
+        
+        /// <summary>
+        /// Determines whether the specified note identifier is archive.
+        /// </summary>
+        /// <param name="noteId">The note identifier.</param>
+        /// <returns>
+        ///   <c>true</c> if the specified note identifier is archive; otherwise, <c>false</c>.
+        /// </returns>
         public bool IsArchive(long noteId)
         {
             try
             {
-                var notes = fundoContext.Notes.FirstOrDefault(e => e.NotesId == noteId);
+                var notes = this.fundoContext.Notes.FirstOrDefault(e => e.NotesId == noteId);
 
                 if (notes != null)
                 {
@@ -231,21 +316,34 @@ namespace RepositoryLayer.Service
                     {
                         notes.IsArchive = true;
                     }
+
                     notes.ModifiedAt = DateTime.Now;
                 }
-                int changes = fundoContext.SaveChanges();
+
+                int changes = this.fundoContext.SaveChanges();
 
                 if (changes > 0)
                 {
                     return true;
                 }
-                else { return false; }
+                else
+                { 
+                    return false; 
+                }
             }
             catch (Exception)
             {
                 throw;
             }
         }
+        
+        /// <summary>
+        /// Uploads the image.
+        /// </summary>
+        /// <param name="noteId">The note identifier.</param>
+        /// <param name="userId">The user identifier.</param>
+        /// <param name="image">The image.</param>
+        /// <returns>upload upload</returns>
         public NotesEntity UploadImage(long noteId, long userId, IFormFile image)
         {
             try
@@ -284,25 +382,38 @@ namespace RepositoryLayer.Service
                 throw;
             }
         }
-        //Method to ChangeColor Details.
+
+        ////Method to ChangeColor Details.
+
+        /// <summary>
+        /// Gets or sets
+        /// </summary>
+        /// <param name="noteId">The note identifier.</param>
+        /// <param name="userId">The user identifier.</param>
+        /// <param name="notesModel">The notes model.</param>
+        /// <returns>colour colour</returns>
         public bool ChangeColour(long noteId, long userId, ChangeColour notesModel)
         {
             try
             {
-                var result = fundoContext.Notes.FirstOrDefault(e => e.NotesId == noteId && e.Id == userId);
+                var result = this.fundoContext.Notes.FirstOrDefault(e => e.NotesId == noteId && e.Id == userId);
 
                 if (result != null)
                 {
                     result.Colour = notesModel.Colour;
                     result.ModifiedAt = DateTime.Now;
                 }
-                int changes = fundoContext.SaveChanges();
+
+                int changes = this.fundoContext.SaveChanges();
 
                 if (changes > 0)
                 {
                     return true;
                 }
-                else { return false; }
+                else 
+                {
+                    return false; 
+                }
             }
             catch (Exception)
             {

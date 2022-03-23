@@ -1,29 +1,46 @@
-﻿using RepositoryLayer.Entity;
-using RepositoryLayer.Interface;
-using RepositoryLayer.Context;
-using System;
-using CommonLayer.Model;
-using System.Linq;
-using System.Collections.Generic;
-
-namespace RepositoryLayer.Service
+﻿namespace RepositoryLayer.Service
 {
-    public class CollabRL: ICollabRL
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using CommonLayer.Model;
+    using RepositoryLayer.Context;
+    using RepositoryLayer.Entity;
+    using RepositoryLayer.Interface;
+   
+    /// <summary>
+    /// ok ok
+    /// </summary>
+    /// <seealso cref="RepositoryLayer.Interface.ICollabRL" />
+    public class CollabRL : ICollabRL
     {
+        /// <summary>
+        /// The fundo context
+        /// </summary>
         private readonly FundoContext fundoContext;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="CollabRL"/> class.
+        /// </summary>
+        /// <param name="fundoContext">The fundo context.</param>
         public CollabRL(FundoContext fundoContext)
         {
             this.fundoContext = fundoContext;
         }
+
+        /// <summary>
+        /// Adds the collaborator.
+        /// </summary>
+        /// <param name="collabModel">The collab model.</param>
+        /// <returns>add add</returns>
         public CollabEntity AddCollaborator(CollabModel collabModel)
         {
             try
             {
                 CollabEntity collaboration = new CollabEntity();
-                var user = fundoContext.User.Where(e => e.Email == collabModel.CollabEmail).FirstOrDefault();
+                var user = this.fundoContext.User.Where(e => e.Email == collabModel.CollabEmail).FirstOrDefault();
 
-                var notes = fundoContext.Notes.Where(e => e.NotesId == collabModel.NotesId && e.Id == collabModel.Id).FirstOrDefault();
+                var notes = this.fundoContext.Notes.Where(e => e.NotesId == collabModel.NotesId && e.Id == collabModel.Id).FirstOrDefault();
                 if (notes != null && user != null)
                 {
                     collaboration.NotesId = collabModel.NotesId;
@@ -37,14 +54,19 @@ namespace RepositoryLayer.Service
                 {
                     return null;
                 }
-
             }
             catch (Exception)
             {
-
                 throw;
             }
         }
+
+        /// <summary>
+        /// Gets or sets.
+        /// </summary>
+        /// <param name="userId">The user identifier.</param>
+        /// <param name="collabId">The collab identifier.</param>
+        /// <returns>remove remove</returns>
         public CollabEntity RemoveCollab(long userId, long collabId)
         {
             try
@@ -63,10 +85,16 @@ namespace RepositoryLayer.Service
             }
             catch (Exception)
             {
-
                 throw;
             }
         }
+
+        /// <summary>
+        /// Gets the by note identifier.
+        /// </summary>
+        /// <param name="noteId">The note identifier.</param>
+        /// <param name="userId">The user identifier.</param>
+        /// <returns>get get</returns>
         public List<CollabEntity> GetByNoteId(long noteId, long userId)
         {
             try
@@ -86,6 +114,11 @@ namespace RepositoryLayer.Service
                 throw;
             }
         }
+
+        /// <summary>
+        /// Gets or sets
+        /// </summary>
+        /// <returns>getall getall</returns>
         public List<CollabEntity> GetAllCollab()
         {
             try

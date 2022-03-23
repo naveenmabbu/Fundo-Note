@@ -1,21 +1,39 @@
-﻿using RepositoryLayer.Context;
-using RepositoryLayer.Entity;
-using RepositoryLayer.Interface;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-namespace RepositoryLayer.Service
+﻿namespace RepositoryLayer.Service
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using RepositoryLayer.Context;
+    using RepositoryLayer.Entity;
+    using RepositoryLayer.Interface;
+
+    /// <summary>
+    /// ok ok
+    /// </summary>
+    /// <seealso cref="RepositoryLayer.Interface.ILabelRL" />
     public class LabelRL : ILabelRL
     {
+        /// <summary>
+        /// The fundo context
+        /// </summary>
         private readonly FundoContext fundoContext;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="LabelRL"/> class.
+        /// </summary>
+        /// <param name="fundoContext">The fundo context.</param>
         public LabelRL(FundoContext fundoContext)
         {
             this.fundoContext = fundoContext;
         }
+
+        /// <summary>
+        /// Adds the name of the label.
+        /// </summary>
+        /// <param name="labelName">Name of the label.</param>
+        /// <param name="noteId">The note identifier.</param>
+        /// <param name="userId">The user identifier.</param>
+        /// <returns>add add</returns>
         public LabelEntity AddLabelName(string labelName, long noteId, long userId)
         {
             try
@@ -39,10 +57,17 @@ namespace RepositoryLayer.Service
             }
             catch (Exception)
             {
-
                 throw;
             }
         }
+
+        /// <summary>
+        /// Updates the label.
+        /// </summary>
+        /// <param name="labeName">Name of the labe.</param>
+        /// <param name="noteId">The note identifier.</param>
+        /// <param name="userId">The user identifier.</param>
+        /// <returns>update update</returns>
         public LabelEntity UpdateLabel(string labeName, long noteId, long userId)
         {
             try
@@ -54,7 +79,6 @@ namespace RepositoryLayer.Service
                     this.fundoContext.Label.Update(label);
                     this.fundoContext.SaveChanges();
                     return label;
-
                 }
                 else
                 {
@@ -63,10 +87,16 @@ namespace RepositoryLayer.Service
             }
             catch (Exception)
             {
-
                 throw;
             }
         }
+
+        /// <summary>
+        /// Removes the label.
+        /// </summary>
+        /// <param name="labelId">The label identifier.</param>
+        /// <param name="userId">The user identifier.</param>
+        /// <returns>remove remove</returns>
         public bool RemoveLabel(long labelId, long userId)
         {
             try
@@ -91,6 +121,11 @@ namespace RepositoryLayer.Service
             }
         }
 
+        /// <summary>
+        /// Gets the by labe identifier.
+        /// </summary>
+        /// <param name="noteId">The note identifier.</param>
+        /// <returns>get get</returns>
         public List<LabelEntity> GetByLabeId(long noteId)
         {
             try
@@ -111,6 +146,11 @@ namespace RepositoryLayer.Service
                 throw;
             }
         }
+
+        /// <summary>
+        /// Gets all labels.
+        /// </summary>
+        /// <returns>getall getall</returns>
         public List<LabelEntity> GetAllLabels()
         {
             try
