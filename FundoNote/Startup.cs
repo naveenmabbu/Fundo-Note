@@ -2,6 +2,7 @@ namespace FundoNote
 {
     using BusinessLayer.Interface;
     using BusinessLayer.Service;
+    using CommonLayer.Model;
     using Microsoft.AspNetCore.Authentication.JwtBearer;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;

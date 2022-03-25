@@ -304,7 +304,7 @@
         /// <param name="image">The image.</param>
         /// <returns>null null.</returns>
         [Authorize]
-        [HttpPost("ImageUpload")]
+        [HttpPost("{noteId}/ImageUpload")]
         public IActionResult UploadImage(long noteId, IFormFile image)
         {
             try

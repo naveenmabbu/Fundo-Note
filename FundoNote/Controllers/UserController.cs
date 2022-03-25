@@ -5,6 +5,7 @@
     using BusinessLayer.Interface;
     using CommonLayer.Model;
     using Microsoft.AspNetCore.Mvc;
+    using RepositoryLayer.Entity;
 
     /// <summary>
     /// ok ok
@@ -41,16 +42,16 @@
                 var result = this.userBL.Registration(user);
                 if (result != null)
                 {
-                    return this.Ok(new { success = true, message = "registration successful", data = result });
+                    return this.Ok(new ExceptionModeel<UserEntity> { Status = true, Message = "Registration Successfull", Data = result });
                 }
                 else
                 {
-                    return this.BadRequest(new { success = false, message = "registration unsuccessful" });
+                    return this.BadRequest(new ExceptionModeel<String> { Status = true, Message = "Registration Successfull"});
                 }
             }
             catch (Exception)
             {
-                throw;
+                return this.BadRequest(new ExceptionModeel<String> { Status = true, Message = "Registration Successfull" });
             }
         }
 
@@ -67,16 +68,16 @@
                 var result = this.userBL.login(userLogin);
                 if (result != null)
                 {
-                    return this.Ok(new { success = true, message = "Login successful", data = result });
+                    return this.Ok(new ExceptionModeel<string> { Status = true, Message = "Login Successfull", Data = result });
                 }
                 else
                 {
-                    return this.BadRequest(new { success = false, message = "Login unsuccessful" });
+                    return this.BadRequest(new ExceptionModeel<String> { Status = true, Message = "Login UnSuccessfull" });
                 }
             }
             catch (Exception)
             {
-                throw;
+                return this.BadRequest(new ExceptionModeel<String> { Status = true, Message = " Login UnSuccessfull" });
             }
         }
 
@@ -93,16 +94,16 @@
                 var result = this.userBL.ForgetPassword( email);
                 if (result != null)
                 {
-                    return this.Ok(new { success = true, message = "mail sent succesful", data = result });
+                    return this.Ok(new ExceptionModeel<string> { Status = true, Message = "Forget Successfull"});
                 }
                 else
                 {
-                    return this.BadRequest(new { success = false, message = "enter a valid email" });
+                    return this.BadRequest(new ExceptionModeel<String> { Status = true, Message = " Forget UnSuccessfull" });
                 }
             }
             catch (Exception)
             {
-                throw;
+                return this.BadRequest(new ExceptionModeel<String> { Status = true, Message = " Forget UnSuccessfull" });
             }
         }
 
@@ -121,16 +122,16 @@
                 var user = userBL.ResetPassword(email, password, confirmpassword);
                 if (!user)
                 {
-                    return this.BadRequest(new { success = false, message = "enter a valid email" });
+                    return this.Ok(new ExceptionModeel<string> { Status = true, Message = "Reset Successfull" });
                 }
                 else
                 {
-                    return this.Ok(new { success = true, message = "rest password succesful" });
+                    return this.BadRequest(new ExceptionModeel<String> { Status = true, Message = " Reset UnSuccessfull" });
                 }
             }
             catch (Exception)
             {
-                throw;
+                return this.BadRequest(new ExceptionModeel<String> { Status = true, Message = " Reset UnSuccessfull" });
             }
         }
     }
