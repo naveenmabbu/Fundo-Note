@@ -110,3 +110,7 @@ C:\Users\User\source\repos\FundoNote\FundoNote\bin\Debug\netcoreapp3.1\VisioForg
 C:\Users\User\source\repos\FundoNote\FundoNote\bin\Debug\netcoreapp3.1\VisioForge.Libs.dll
 C:\Users\User\source\repos\FundoNote\FundoNote\bin\Debug\netcoreapp3.1\VisioForge.MediaFramework.dll
 C:\Users\User\source\repos\FundoNote\FundoNote\bin\Debug\netcoreapp3.1\VisioForge.Types.dll
+C:\Users\User\source\repos\FundoNote\FundoNote\bin\Debug\netcoreapp3.1\NLog.config
+C:\Users\User\source\repos\FundoNote\FundoNote\bin\Debug\netcoreapp3.1\NLog.dll
+C:\Users\User\source\repos\FundoNote\FundoNote\bin\Debug\netcoreapp3.1\NLog.Extensions.Logging.dll
+C:\Users\User\source\repos\FundoNote\FundoNote\bin\Debug\netcoreapp3.1\NLog.Web.AspNetCore.dll

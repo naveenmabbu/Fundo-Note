@@ -2,6 +2,9 @@ namespace FundoNote
 {
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.Extensions.Hosting;
+    using Microsoft.Extensions.Logging;
+    using NLog.Web;
+    using System.IO;
 
     /// <summary>
     /// ok ok
@@ -14,6 +17,8 @@ namespace FundoNote
         /// <param name="args">The arguments.</param>
         public static void Main(string[] args)
         {
+            var logPath = Path.Combine(Directory.GetCurrentDirectory(), "Logs");
+            NLog.GlobalDiagnosticsContext.Set("LogDirectory", logPath);
             CreateHostBuilder(args).Build().Run();
         }
 
@@ -27,6 +32,9 @@ namespace FundoNote
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();
-                });
+                }).ConfigureLogging(opt => {
+                    opt.ClearProviders();
+                    opt.SetMinimumLevel(LogLevel.Trace);
+                }).UseNLog();
     }
 }
