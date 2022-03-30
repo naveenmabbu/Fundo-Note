@@ -26,10 +26,10 @@
         /// Initializes a new instance of the <see cref="UserController"/> class.
         /// </summary>
         /// <param name="userBL">The userBL.</param>
-        public UserController(IUserBL userBL, ILogger<UserController> logger)
+        public UserController(IUserBL userBL)//, ILogger<UserController> logger)
         {
             this.userBL = userBL;
-            this._logger = logger;
+            //this._logger = logger;
         }
 
         /// <summary>
@@ -45,18 +45,18 @@
                 var result = this.userBL.Registration(user);
                 if (result != null)
                 {
-                    _logger.LogInformation("Register successfull");
+                    //_logger.LogInformation("Register successfull");
                     return this.Ok(new ExceptionModeel<UserEntity> { Status = true, Message = "Registration Successfull", Data = result });
                 }
                 else
                 {
-                    _logger.LogError("Register unsuccessfull");
+                    //_logger.LogError("Register unsuccessfull");
                     return this.BadRequest(new ExceptionModeel<String> { Status = true, Message = "Registration unSuccessfull"});
                 }
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex.ToString());
+                //_logger.LogError(ex.ToString());
                 return this.BadRequest(new ExceptionModeel<String> { Status = true, Message = ex.Message });
             }
         }

@@ -33,10 +33,10 @@
         /// </summary>
         /// <param name="fundoContext">The fundo context.</param>
         /// <param name="_Toolsettings">The toolsettings.</param>
-        public UserRL(FundoContext fundoContext, IConfiguration _Toolsettings)
+        public UserRL(FundoContext fundoContext)//, IConfiguration _Toolsettings)
         {
             this.fundoContext = fundoContext;
-            this._Toolsettings = _Toolsettings;
+            //this._Toolsettings = _Toolsettings;
         }
 
         /// <summary>
