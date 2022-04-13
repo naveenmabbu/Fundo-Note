@@ -22,24 +22,60 @@ namespace usertest
         {
             newContext = new DbContextOptionsBuilder<FundoContext>().UseSqlServer(connectionstring).Options;
         }
-        public UnitTest1()
-        {
-            var context = new FundoContext(newContext);
-            userRL = new UserRL(context);
-            userBL = new UserBL(userRL);
-        }
+        //public UnitTest1()
+        //{
+        //    var context = new FundoContext(newContext);
+        //    userRL = new UserRL(context);
+        //    userBL = new UserBL(userRL);
+        //}
 
         [Fact]
         public void RegisterApi_AddUser_Returns_OkResult()
         {
             var controller = new UserController(userBL);
-            var data = new UserRegistration {
-            FirstName="Peter",
-            LastName="Parker",
-            Email="Peter123@gmail.com",
-            Password="Peter@123"
+            var data = new UserRegistration
+            {
+                FirstName = "Peter",
+                LastName = "Parker",
+                Email = "Peter123@gmail.com",
+                Password = "Peter@123"
             };
             var result = controller.Registration(data);
+            Assert.IsType<OkObjectResult>(result);
+        }
+
+        [Fact]
+        public void LoginUser_ValidLoginData_Return_OkResult()
+        {
+            var controller = new UserController(userBL);
+            var data = new UserLogin
+            {
+                Email = "Tonystark69@gmail.com",
+                Password = "Tonystark@69"
+            };
+            var result = controller.login(data);
+            Assert.IsType<OkObjectResult>(result);
+        }
+
+        [Fact]
+        public void ForgetPsswordApi_AddUser_Returns_OkResult()
+        {
+            var controller = new UserController(userBL);
+            string email = "Tonystark69@gmail.com";
+            var result = controller.ForgetPassword(email);
+            Assert.IsType<OkObjectResult>(result);
+        }
+
+        [Fact]
+        public void ResetPassword_return_OkResult()
+        {
+            var controller = new UserController(userBL);
+            var data = new ResetPass
+            {
+                Password = "Tonystark@697",
+                ConformPassword = "Tonystark@697"
+            };
+            var result = controller.ResetPassword(data);
             Assert.IsType<OkObjectResult>(result);
         }
     }

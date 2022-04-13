@@ -4,6 +4,7 @@
     using System.Security.Claims;
     using BusinessLayer.Interface;
     using CommonLayer.Model;
+    using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Logging;
     using RepositoryLayer.Entity;
@@ -21,6 +22,9 @@
         /// </summary>
         private readonly IUserBL userBL;
         private readonly ILogger<UserController> _logger;
+
+        string sessionName = "fullName";
+        string sessionEmail = "email";
 
         /// <summary>
         /// Initializes a new instance of the <see cref="UserController"/> class.
@@ -45,19 +49,21 @@
                 var result = this.userBL.Registration(user);
                 if (result != null)
                 {
+                    string sName = HttpContext.Session.GetString(sessionName);
+                    string sEmail = HttpContext.Session.GetString(sessionEmail);
                     //_logger.LogInformation("Register successfull");
-                    return this.Ok(new ExceptionModeel<UserEntity> { Status = true, Message = "Registration Successfull", Data = result });
+                    return this.Ok(new ExceptionModeel<string> { Status = true, Message = "Registration Successfull", Data = "Session || Name : " + sName + "|| Email Id : " + sEmail });
                 }
                 else
                 {
                     //_logger.LogError("Register unsuccessfull");
-                    return this.BadRequest(new ExceptionModeel<String> { Status = true, Message = "Registration unSuccessfull"});
+                    return this.BadRequest(new ExceptionModeel<String> { Status = false, Message = "Registration unSuccessfull"});
                 }
             }
             catch (Exception ex)
             {
                 //_logger.LogError(ex.ToString());
-                return this.BadRequest(new ExceptionModeel<String> { Status = true, Message = ex.Message });
+                return this.BadRequest(new ExceptionModeel<String> { Status = false, Message = ex.Message });
             }
         }
 
@@ -74,19 +80,19 @@
                 var result = this.userBL.login(userLogin);
                 if (result != null)
                 {
-                    _logger.LogInformation("login successfull");
+                    //_logger.LogInformation("login successfull");
                     return this.Ok(new ExceptionModeel<string> { Status = true, Message = "Mail Login Successfull", Data = result });
                 }
                 else
                 {
-                    _logger.LogError("login unsuccessfull");
-                    return this.BadRequest(new ExceptionModeel<String> { Status = true, Message = "enter proper login details" });
+                    //_logger.LogError("login unsuccessfull");
+                    return this.BadRequest(new ExceptionModeel<String> { Status = false, Message = "enter proper login details" });
                 }
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex.ToString());
-                return this.BadRequest(new ExceptionModeel<String> { Status = true, Message = ex.Message });
+                //_logger.LogError(ex.ToString());
+                return this.BadRequest(new ExceptionModeel<String> { Status = false, Message = ex.Message });
             }
         }
 
@@ -103,19 +109,19 @@
                 var result = this.userBL.ForgetPassword( email);
                 if (result != null)
                 {
-                    _logger.LogInformation("forget successfull");
+                    //_logger.LogInformation("forget successfull");
                     return this.Ok(new ExceptionModeel<string> { Status = true, Message = "Forget password Successfull and token sent to mail" });
                 }
                 else
                 {
-                    _logger.LogError("forget successfull");
-                    return this.BadRequest(new ExceptionModeel<String> { Status = true, Message = " Forget password UnSuccessfull give proper username" });
+                    //_logger.LogError("forget successfull");
+                    return this.BadRequest(new ExceptionModeel<String> { Status = false, Message = " Forget password UnSuccessfull give proper username" });
                 }
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex.ToString());
-                return this.BadRequest(new ExceptionModeel<String> { Status = true, Message = ex.Message});
+                //_logger.LogError(ex.ToString());
+                return this.BadRequest(new ExceptionModeel<String> { Status = false, Message = ex.Message});
             }
         }
 
@@ -126,27 +132,30 @@
         /// <param name="confirmpassword">The confirmpassword.</param>
         /// <returns>null null.</returns>
         [HttpPut("ResetPassword")]
-        public IActionResult ResetPassword(string password, string confirmpassword)
+        public IActionResult ResetPassword(ResetPass resetPass)
         {
             try
             {
-                var email = User.FindFirst(ClaimTypes.Email).Value.ToString();
-                var user = userBL.ResetPassword(email, password, confirmpassword);
+                //var email = User.FindFirst(ClaimTypes.Email).Value.ToString();
+                string email = "Tonystark69@gmail.com";
+                var user = userBL.ResetPassword(resetPass,email);
                 if (!user)
                 {
-                    _logger.LogInformation("reset successfull");
-                    return this.Ok(new ExceptionModeel<string> { Status = true, Message = "Reset password Successfull and token sent to mail" });
+                    //_logger.LogError("reset unsuccessfull");
+                    return this.BadRequest(new ExceptionModeel<String> { Status = true, Message = " Reset password UnSuccessfull give proper username" });
+                    
                 }
                 else
                 {
-                    _logger.LogError("reset successfull");
-                    return this.BadRequest(new ExceptionModeel<String> { Status = true, Message = " Reset password UnSuccessfull give proper username" });
+                    //_logger.LogInformation("reset successfull");
+                    return this.Ok(new ExceptionModeel<string> { Status = false, Message = "Reset password Successfull and token sent to mail" });
+
                 }
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex.ToString());
-                return this.BadRequest(new ExceptionModeel<String> { Status = true, Message = ex.Message});
+                //_logger.LogError(ex.ToString());
+                return this.BadRequest(new ExceptionModeel<String> { Status = false, Message = ex.Message});
             }
         }
     }

@@ -33,10 +33,10 @@
         /// </summary>
         /// <param name="fundoContext">The fundo context.</param>
         /// <param name="_Toolsettings">The toolsettings.</param>
-        public UserRL(FundoContext fundoContext)//, IConfiguration _Toolsettings)
+        public UserRL(FundoContext fundoContext, IConfiguration _Toolsettings)
         {
             this.fundoContext = fundoContext;
-            //this._Toolsettings = _Toolsettings;
+            this._Toolsettings = _Toolsettings;
         }
 
         /// <summary>
@@ -218,14 +218,14 @@
         /// <param name="password">The password.</param>
         /// <param name="conformPassword">The conform password.</param>
         /// <returns>reet reset</returns>
-        public bool ResetPassword(string email, string password, string conformPassword)
+        public bool ResetPassword(ResetPass resetPass, string email)
         {
             try
             {
-                if(password.Equals(conformPassword))
+                if(resetPass.Password.Equals(resetPass.ConformPassword))
                 {
                     var user = this.fundoContext.User.Where(x => x.Email == email).FirstOrDefault();
-                    user.Password = conformPassword;
+                    user.Password = this.EncryptPassword(resetPass.ConformPassword);
                     this.fundoContext.SaveChanges();
                     return true;
                 }

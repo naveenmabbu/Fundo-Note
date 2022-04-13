@@ -85,11 +85,11 @@
         /// <returns>
         /// null null.
         /// </returns>
-        public bool ResetPassword(string email, string password, string conformPassword)
+        public bool ResetPassword(ResetPass resetPass, string email)
         {
             try
             {
-                return this.userRL.ResetPassword(email, password, conformPassword);
+                return this.userRL.ResetPassword(resetPass,email);
             }
             catch (Exception)
             {

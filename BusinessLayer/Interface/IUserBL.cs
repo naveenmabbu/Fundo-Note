@@ -36,6 +36,6 @@
         /// <param name="password">The password.</param>
         /// <param name="conformPassword">The conform password.</param>
         /// <returns>null null.</returns>
-        public bool ResetPassword(string email, string password, string conformPassword);
+        public bool ResetPassword(ResetPass resetPass, string email);
     }
 }

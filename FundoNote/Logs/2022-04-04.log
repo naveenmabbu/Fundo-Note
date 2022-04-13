@@ -1,0 +1,7 @@
+2022-04-04 08:48:43.6861 INFO Application started. Press Ctrl+C to shut down.
+2022-04-04 08:48:43.7368 INFO Hosting environment: Development
+2022-04-04 08:48:43.7419 INFO Content root path: C:\Users\User\source\repos\FundoNote\FundoNote
+2022-04-04 08:48:53.6099 ERROR Error closing the session.
+2022-04-04 08:49:03.0853 ERROR Error closing the session.
+2022-04-04 08:50:11.6901 ERROR Session cache read exception, Key:302289a2-056c-d31f-cdaf-048312eccd06
+2022-04-04 08:50:20.8922 ERROR Error closing the session.

@@ -15,6 +15,7 @@ namespace FundoNote
     using RepositoryLayer.Context;
     using RepositoryLayer.Interface;
     using RepositoryLayer.Service;
+    using System;
 
     /// <summary>
     /// ok ok
@@ -100,10 +101,23 @@ namespace FundoNote
             services.AddTransient<ICollabRL, CollabRL>();
             services.AddTransient<ILabelBL, LabelBL>();
             services.AddTransient<ILabelRL, LabelRL>();
+            services.AddSession(options => {
+                options.IdleTimeout = TimeSpan.FromMinutes(10);
+                options.Cookie.HttpOnly = true;
+                options.Cookie.IsEssential = true;
+            });
             services.AddMemoryCache();
             services.AddStackExchangeRedisCache(options =>
             {
                 options.Configuration = "localhost:6379";
+            });
+            services.AddCors(options =>
+            {
+                options.AddPolicy(
+                name: "AllowOrigin",
+              builder => {
+                  builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
+              });
             });
         }
 
@@ -114,13 +128,15 @@ namespace FundoNote
             {
                 app.UseDeveloperExceptionPage();
             }
-
+            app.UseSession();
+            app.UseCors("AllowOrigin");
             app.UseHttpsRedirection();
 
             app.UseRouting();
 
             app.UseAuthentication();
             app.UseAuthorization();
+
 
             app.UseEndpoints(endpoints =>
             {
